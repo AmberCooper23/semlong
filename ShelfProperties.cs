@@ -2,7 +2,7 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-public class ShelfProperties : MonoBehaviour
+public class ShelfProperties : MonoBehaviour //Makes adding shelves easier, simply make a parent object where all the shelves will be children of then add this script to the parent
 {
     private Transform Parent;
     private int ChildCount;
