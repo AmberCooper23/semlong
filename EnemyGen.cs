@@ -1,17 +1,29 @@
 using System.Collections;
 using System.Collections.Generic;
+using System.Runtime.CompilerServices;
+using Unity.VisualScripting;
 using UnityEngine;
 
 public class EnemyGen : MonoBehaviour
-{
-    public Transform trans;
+{ //The comments next to the public variable is what must be placed in these variables
+    public Transform trans; //Empty Parent Object (has 4 empty children but only add the parent) - explained in PositionVar struct
     PositionVar position;
-    private Transform CurrentPos;
+    private Transform CurrentPos;  
 
-    public GameObject FlyPrefab;
-    public GameObject Fly;
+    public GameObject FlyPrefab; // the prefab with the Enemy character (I included the prefab file I used called Fly.prefab) 
+    public GameObject Player1; //The player1 character
+    private GameObject Fly;
 
-    public float timer = 0f;
+    private GameObject[] EnemyObjects;
+    private int EnemyNumber;
+    private Rigidbody2D rb;
+
+    private Vector2 WalkVelocity = new Vector2(); //Not used and I was too lazy to delete
+
+    public float timer = 0f; //Leave this its used to instantiate new enemies 
+    public float WalkTimer = 6f; //Not used
+
+    private int TakenPos = 0; 
 
     // Start is called before the first frame update
 
@@ -20,9 +32,9 @@ public class EnemyGen : MonoBehaviour
         public  Transform Pos1, Pos2, Pos3, Pos4;
 
 
-        public PositionVar(Transform pos1, Transform pos2, Transform pos3, Transform pos4)
-        {
-            Pos1 = pos1;
+        public PositionVar(Transform pos1, Transform pos2, Transform pos3, Transform pos4) //NB create an empty parent object with 4 empty child objects.
+        {                                                                                  // Place the 4 children where you want the enemies to spawn.
+            Pos1 = pos1;                                                                   // Drag the parent object into the public GameObject variable: trans.
             Pos2 = pos2;
             Pos3 = pos3;
             Pos4 = pos4;
@@ -35,10 +47,13 @@ public class EnemyGen : MonoBehaviour
     void Start()
     {
         trans = GetComponent<Transform>();
-        position = new PositionVar(trans.GetChild(0), trans.GetChild(1), trans.GetChild(2), trans.GetChild(3)); 
+        position = new PositionVar(trans.GetChild(0), trans.GetChild(1), trans.GetChild(2), trans.GetChild(3));
+
+        EnemyNumber = 0; //Used for array index
+        EnemyObjects = new GameObject[1000]; //Large number to store many enemies (i.e max would be 1000 enemies)
     }
 
-    private void PosGen(int i)
+    private void PosGen(int i) //Function which helps instantiate the Fly enemies
     {
         if (i == 0)
         {
@@ -61,18 +76,59 @@ public class EnemyGen : MonoBehaviour
         }
     }
 
-  private void EnemyGenerator()
+  private void EnemyGenerator() //Generates Flies (currently only 4 every 20 seconds) 
     {
-        int Num = Random.Range(0,3);
+        
+        
 
-        PosGen(Num);
+        PosGen(TakenPos); //Gets a position from PosGen() function
+        
 
         Fly = Instantiate(FlyPrefab, CurrentPos.position, Quaternion.identity);
 
-        Fly.transform.tag = "Enemy";
+        Fly.transform.tag = "Enemy"; //N.B use this tag to reference the enemy objects in the game !!!!
+        
         Fly.AddComponent<Rigidbody2D>();
+        Fly.GetComponent<Rigidbody2D>().constraints = RigidbodyConstraints2D.FreezeRotation;
         Fly.AddComponent<BoxCollider2D>();
 
+        EnemyObjects[EnemyNumber] = Fly; //Adds object to array
+        EnemyNumber++;
+
+        TakenPos++;
+        
+
+    }
+
+    private void EnemyMovement() //Uses the array to allow all instantiated objects to move towards player1
+    {
+        Rigidbody2D rbPlayer1 = Player1.GetComponent<Rigidbody2D>();
+
+        EnemyArrayReset();
+        
+        for (int i = 0; i < EnemyNumber; i++)
+        {
+            EnemyObjects[i].transform.position = Vector2.MoveTowards(EnemyObjects[i].transform.position, Player1.transform.position, 2f * Time.deltaTime);
+        }
+
+
+        
+        
+    }
+    
+    private void EnemyArrayReset() //Resets array if an enemy is killed so there are no null values in the array which can cause errors
+    {
+        GameObject Swap;
+
+        for (int k = 0; k < EnemyNumber; k++)
+        {
+            if (EnemyObjects[k] == null)
+            {
+              Swap =  EnemyObjects[EnemyNumber-1];
+                EnemyObjects[k] = Swap;
+                EnemyNumber-=2;
+            }
+        }
     }
 
     // Update is called once per frame
@@ -82,15 +138,26 @@ public class EnemyGen : MonoBehaviour
         {
             for (int k = 0; k <=3; k++)
             {
-                EnemyGenerator();
+                EnemyGenerator(); //4 Enemies are generated every 20 seconds
+                
             }
 
             timer = 20f;
+            TakenPos = 0;
         }
 
         if (timer != 0f)
         {
             timer -= Time.deltaTime;
         }
+
+
+       // EnemyArrayReset(); Script used in EnemyGen();
+        EnemyMovement();
+    }
+
+    private void OnCollisionEnter2D(Collision2D collision) //Not currently used
+    {
+        
     }
 }
