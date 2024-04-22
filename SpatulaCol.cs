@@ -4,7 +4,7 @@ using System.Net;
 using Unity.VisualScripting;
 using UnityEngine;
 
-public class SpatulaCol : MonoBehaviour
+public class SpatulaCol : MonoBehaviour //NB Add this script to the spatula object before you make it a prefab!!!
 {
     private GameObject spatula;
   
