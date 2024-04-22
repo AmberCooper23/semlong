@@ -2,28 +2,28 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEditor;
 using UnityEngine;
-using UnityEngine.InputSystem;
-
-public class Player1Movement : MonoBehaviour
+using UnityEngine.InputSystem; //Make sure to have this installed on Unity by going to Window >> Package Manager>>Choose Unity Registery>>
+                                // Search for Input Systems then install
+public class Player1Movement : MonoBehaviour //Attach to player 1 object
 {
     private GameObject Player1;
     private Rigidbody2D rb1;
 
-    public GameObject spatula;
-    GameObject SpatulaObject;
+    public GameObject spatula; //Place the prefab for a spatula/projectile (NB ensure that the object has the SpatulaCol script attached to it before you make
+    GameObject SpatulaObject; // it a Prefab.
 
     Keyboard key = Keyboard.current;
 
-    public float JumpHeight = 2f;
-    public float MovementSpeed = 300f;
-    public float SpatulaSpeed = 15000f;
+    public float JumpHeight = 2f; //Change to alter the Jump Height (alter till it works for you)
+    public float MovementSpeed = 300f; //Change for preferance
+    public float SpatulaSpeed = 15000f; //Recommended as spatula is a projectile
 
     private bool OnGround;
     private DirectionCheck direction;
 
-    public float groundCheckRadius = 0.1f;
-    public LayerMask groundLayer;
-    public bool isGrounded;
+   // public float groundCheckRadius = 0.1f; Used to prevent player from jumping through shelves (not intended so all lines relating to this are commeneted out)
+   // public LayerMask groundLayer;
+    public bool isGrounded; 
     // Start is called before the first frame update
     void Start()
     {
@@ -36,7 +36,7 @@ public class Player1Movement : MonoBehaviour
         direction = new DirectionCheck(false,  false,  false, false); 
     }
 
-    private struct DirectionCheck
+    private struct DirectionCheck //Gets direction player is moving in to adjust direction of projectile
     {
         public bool Up, Down, Left, Right;
 
@@ -57,18 +57,18 @@ public class Player1Movement : MonoBehaviour
         Movement();
     }
 
-    void FixedUpdate()
-    {
-        Vector2 position = rb1.position;
-        position.y -= groundCheckRadius;
-        Collider2D hit = Physics2D.OverlapPoint(position, groundLayer);
-        isGrounded = hit != null;
-        if (isGrounded)
-        {
+   // void FixedUpdate()
+    //{
+      //  Vector2 position = rb1.position;
+        //position.y -= groundCheckRadius;
+        //Collider2D hit = Physics2D.OverlapPoint(position, groundLayer);
+        //isGrounded = hit != null;
+        //if (isGrounded)
+        //{
             // Prevent the object from moving through the platform
-            rb1.velocity = new Vector2(rb1.velocity.x, 0);
-        }
-    }
+          //  rb1.velocity = new Vector2(rb1.velocity.x, 0);
+        //}
+   // }
 
     private void Movement()
     {
