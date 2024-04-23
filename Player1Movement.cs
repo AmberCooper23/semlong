@@ -185,7 +185,7 @@ public class Player1Movement : MonoBehaviour //Attach to player 1 object
     private void OnCollisionExit2D(Collision2D collision)
     {
         OnGround = false;
-       if (collision.gameObject == gameObject.CompareTag("Enemy"))
+       if (collision.gameObject == gameObject.CompareTag("Enemy")) //Fixes a bug where player can no longer jump when enemy collides
          {
              OnGround = true;
          }
