@@ -187,5 +187,9 @@ public class Player2Movement : MonoBehaviour //Updated to include projectiles
     private void OnCollisionExit2D(Collision2D collision)
     {
         OnGround = false;
+         if (collision.gameObject == gameObject.CompareTag("Enemy"))
+             {
+                 OnGround = true;
+             }
     }
 }
