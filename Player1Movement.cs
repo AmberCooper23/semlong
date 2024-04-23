@@ -16,7 +16,7 @@ public class Player1Movement : MonoBehaviour //Attach to player 1 object
 
     public float JumpHeight = 2f; //Change to alter the Jump Height (alter till it works for you)
     public float MovementSpeed = 300f; //Change for preferance
-    public float SpatulaSpeed = 15000f; //Recommended as spatula is a projectile
+    public float SpatulaSpeed = 20000f; //Recommended as spatula is a projectile
 
     private bool OnGround;
     private DirectionCheck direction;
@@ -111,7 +111,7 @@ public class Player1Movement : MonoBehaviour //Attach to player 1 object
 
         }
 
-        if (key.shiftKey.isPressed)
+        if (key.leftShiftKey.isPressed)
         {
             Destroy(SpatulaObject);
             SpatulaGenerator();
@@ -132,6 +132,7 @@ public class Player1Movement : MonoBehaviour //Attach to player 1 object
     {
         Vector2 SpatulaDirection = new Vector2();
         Vector2 SpatulaVelocity = new Vector2();
+        float Fixed = 0.25f;
 
 
         if (direction.Up)
@@ -154,7 +155,7 @@ public class Player1Movement : MonoBehaviour //Attach to player 1 object
             SpatulaDirection = Vector2.left;
         }
 
-        SpatulaVelocity = SpatulaDirection * SpatulaSpeed * Time.deltaTime;
+        SpatulaVelocity = SpatulaDirection * SpatulaSpeed*Fixed * Time.deltaTime;
 
         return SpatulaVelocity;
 
